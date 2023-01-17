@@ -1,0 +1,15 @@
+Ewallet Meeting
+Date: November 3, 2022
+Time: 4:30 PM
+Minutes:
+1) quantity part would be nice if can edit to input number besides the adding and subtracting buttons.
+2) medifund approval duration makes separate type: Funding Type and the Approval duration
+3) before consumable profile, put the frequency days/week/monthly (will be base on a floating window of calculator)
+4) no need ALL in status
+5) Suggestion for wordings: Active, Expired, Pending
+6) patients may be on SMTA/PA/MFEC card assistance too?
+7) As retail staff would bill according to the type of assistance
+8) Can the expiry of the voucher be defaulted as 1 year? - Mei Xin
+9) indicate if no funding available
+10) add status of funding in voucher preview
+11) add frequency button for frequency column under Consumable profile together with the items.

@@ -1,0 +1,71 @@
+• change recepients 'IC' to 'ID'
+
+• change the word 'patient' to 'client'
+
+• medifund approval duration - put 'start date' and 'end date'. 
+
+end date 25th apr, means 25th last day can use
+
+• status - (put filter on the status to show only active, etch)
+
+'medifund % approved' to 'medifund'
+
+enter the name and show list of programs - (show on same table)
+
+add a consumables profile page
+
+simplify description of items
+
+i drop off first, will await the demo exe and feedback from there. basically we need to have 3 section: 1) client profile; 2) consumable profile; 3) voucher maintenance
+
+
+-----------------------------------------------
+
+ewallet April 25, 2022 Meeting
+
+1) change the word "patient" to "client"
+2) create the "medifund approval duration" "start and end date"
+3) simplified the name of items on list.
+
+Raymond Liew:
+basically we need to have 3 section:
+1) client profile;
+2) consumable profile;
+3) voucher maintenance
+
+Elisabeth Yeo:
+1) Can the expiry date be bolded and in red?
+
+Sharon Yeo:
+1) should there be a short phrase below or above the QR code to indicate to the user what scanning it will lead to?
+
+
+------------------------------------------------------------------------------==
+
+
+hange recepients 'IC' to 'ID'
+
+• change the word 'patient' to 'client'
+
+• medifund approval duration - put 'start date' and 'end date'. 
+
+end date 25th apr, means 25th last day can use
+
+• status - (put filter on the status to show only active, etch)
+
+•'medifund % approved' to 'medifund'
+
+• simplify the patient profile page. have 3 sections and another window for each section
+
+- client profile 
+- consumable profile
+- vouchers
+
+• simplify description of items
+
+• discuss on what will be display on the vouchers
+
+• consider a working calculator app on the dashboard
+
+
+

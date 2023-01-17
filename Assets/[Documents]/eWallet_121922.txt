@@ -1,0 +1,14 @@
+transfer to voucher [DONE]
+voucher preview [DONE]
+use table to list all patients. dropdown to see the vouchers
+Vouchers Status instead of Redeem Voucher [DONE]
+Voucher Succesful page shoukd be in issue voucher.[DONE]
+remove clients particular in create voucher. put it in the vouchers status page [DONE]
+just add a "+ button" beside the clients name in the voucher status. dont need to show the qr code in big. just use small one that can be clicked. when clicked, show the qr code in full and details.[DONE]
+
+
+
+
+
+
+
