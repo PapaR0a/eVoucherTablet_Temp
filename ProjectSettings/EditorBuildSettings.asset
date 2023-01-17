@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/eWallet_main.unity
-    guid: 230662c29365a954d9d743bce27d2ce8
+    path: Assets/Scenes/eWallet_pharmacy.unity
+    guid: fe5bb9dfc79c074428087b25195fb644
   m_configObjects: {}
