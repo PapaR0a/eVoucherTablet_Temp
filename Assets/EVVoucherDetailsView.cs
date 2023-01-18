@@ -28,7 +28,7 @@ public class EVVoucherDetailsView : MonoBehaviour
 
         m_PatientName.text = data.patientName;
         m_Organization.text = $"Organization: {data.org}";
-        m_FundingType.text = $"Funding Type: {data.fundingType}";
+        m_FundingType.text = $"Funding Type: {data.status}";
         m_Department.text = $"Department: {data.department}";
         m_Expiration.text = $"Exp: {data.expiry_date}";
         m_QR.text = $"QR ID: {data.id}";

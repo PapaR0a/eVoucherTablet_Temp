@@ -20,14 +20,11 @@ public class EVVouchersScannedView : MonoBehaviour
     private bool m_isCamAvailable;
     private WebCamTexture m_cameraTexture;
 
+    private float m_Timer = 5;
+
     private IEnumerator CreateVouchers()
     {
         var wait = new WaitForEndOfFrame();
-
-        foreach (Transform item in m_VouchersList)
-        {
-            Destroy(item.gameObject);
-        }
 
         foreach (var voucher in EVModel.Api.ScannedVouchers)
         {
@@ -45,7 +42,18 @@ public class EVVouchersScannedView : MonoBehaviour
 
     private IEnumerator GetVouchers()
     {
+        var wait = new WaitForEndOfFrame();
+
+        foreach (Transform item in m_VouchersList)
+        {
+            Destroy(item.gameObject);
+        }
+
+        EVModel.Api.AllVouchers = null;
+        EVModel.Api.ScannedVouchers = null;
+
         yield return APIHelper.GetAllVouchers();
+
         StartCoroutine(CreateVouchers());
     }
 
@@ -62,7 +70,7 @@ public class EVVouchersScannedView : MonoBehaviour
         {
             if (devices[i].isFrontFacing == false)
             {
-                m_cameraTexture = new WebCamTexture(devices[i].name, (int)m_scanZone.rect.width / 4, (int)m_scanZone.rect.height / 4);
+                m_cameraTexture = new WebCamTexture(devices[i].name, (int)m_scanZone.rect.width, (int)m_scanZone.rect.height);
             }
         }
 
@@ -76,6 +84,16 @@ public class EVVouchersScannedView : MonoBehaviour
 
     private void Update()
     {
+        if (m_Timer > 0 && !m_scannerUI.activeSelf)
+        {
+            m_Timer -= Time.deltaTime;
+        }
+        else
+        {
+            m_Timer = 5f;
+            StartCoroutine(GetVouchers());
+        }
+
         UpdateCameraRender();
     }
 
@@ -96,6 +114,7 @@ public class EVVouchersScannedView : MonoBehaviour
 
     public void OnClickScan()
     {
+        StartCoroutine(GetVouchers());
         m_scannerUI.SetActive(true);
     }
 

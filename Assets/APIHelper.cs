@@ -32,6 +32,7 @@ public static class APIHelper
         }
         
         EVModel.Api.AllVouchers = new List<Voucher>();
+        EVModel.Api.ScannedVouchers = new List<Voucher>();
         foreach (JObject userData in userList)
         {
             JArray vouchersList = userData.Value<JArray>("vouchers");
@@ -45,7 +46,7 @@ public static class APIHelper
                     receivedVoucher.patientName = userData.Value<string>("name");
                     EVModel.Api.AllVouchers.Add(receivedVoucher);
 
-                    if (receivedVoucher.status == "Pending")
+                    if (receivedVoucher.status == "Pending" || receivedVoucher.status == "Redeemed")
                     {
                         EVModel.Api.ScannedVouchers.Add(receivedVoucher);
                     }
@@ -56,6 +57,7 @@ public static class APIHelper
                 }
             }
         }
+        Debug.Log($"<color=yellow>Fetch Data Success</color>");
         return true;
     }
 
@@ -67,8 +69,16 @@ public static class APIHelper
         var postData = new JObject()
         {
             ["patientId"] = data.patientId,
-            ["voucherId"] = data.id,
-            ["status"] = "redeemed"
+            ["voucher"] = new JObject()
+            {
+                ["id"] = data.id,
+                ["org"] = data.org,
+                ["department"] = data.department,
+                ["status"] = "Redeemed",
+                ["expiry_date"] = data.expiry_date,
+                ["fundingType"] = data.fundingType,
+                ["items"] = JArray.FromObject(data.items)
+            }
         };
 
         Debug.Log($"<color=yellow>POST Json: {JsonConvert.SerializeObject(postData)}</color>");
