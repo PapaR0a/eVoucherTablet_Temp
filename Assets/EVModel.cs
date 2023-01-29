@@ -9,6 +9,78 @@ public class EVModel
     public List<Voucher> AllVouchers { get; set; } = new List<Voucher>();
 
     public List<Voucher> ScannedVouchers { get; set; } = new List<Voucher>();
+
+    public List<UserDetail> UsersData { get; set; } = null;
+
+    public UserDetail UserDetail { get; set; } = null;
+
+    public Voucher CachedCurrentVoucher { get; set; } = null;
+
+    public List<string> UsersList { get; set; } = null;
+
+    public List<Voucher> UserActiveVouchers = null;
+
+    public List<Voucher> UserHistoryVouchers = null;
+
+    public void UpdateUserVouchers(string userName)
+    {
+        UserActiveVouchers = new List<Voucher>();
+        UserHistoryVouchers = new List<Voucher>();
+
+        foreach (var data in UsersData)
+        {
+            if (data.name == userName)
+            {
+                UserDetail = data;
+                break;
+            }
+        }
+
+        foreach (var voucher in AllVouchers)
+        {
+            if (userName == voucher.patientName)
+            {
+                if (voucher.status == "active")
+                {
+                    UserActiveVouchers.Add(voucher);
+                }
+                else
+                {
+                    UserHistoryVouchers.Add(voucher);
+                }
+            }
+        }
+    }
+}
+
+public enum Organizations
+{
+    TTSH,
+    WDL,
+    NHGP
+}
+
+[System.Serializable]
+public class UserDetail
+{
+    public string name;
+    public string id;
+    public string fundingType;
+}
+
+[System.Serializable]
+public class PostVoucherData
+{
+    public string patientId;
+    public Voucher voucher;
+}
+
+[System.Serializable]
+public class PatchVoucherData
+{
+    public string patiendId;
+    public string voucherId;
+    public List<VoucherProduct> items;
 }
 
 [System.Serializable]
