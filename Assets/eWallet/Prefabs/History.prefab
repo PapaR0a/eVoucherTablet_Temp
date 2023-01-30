@@ -808,7 +808,7 @@ MonoBehaviour:
           tooltip: 
           showInInspector: 0
           networkSync: 0
-          value: preview page
+          value: redeem page
         fsmObjectParams: []
         fsmVarParams: []
         fsmArrayParams: []
