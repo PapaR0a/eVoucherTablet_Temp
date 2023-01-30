@@ -117,7 +117,7 @@ public class EVRedeemPageView : MonoBehaviour
         bool isRedeemable = voucherData.status == "Pending";
 
         m_BtnRedeem.gameObject.SetActive(!readOnly || isRedeemable);
-        m_TxtRedeemButton.text = isRedeemable ? "Redeem Voucher" : "Redeem Items";
+        //m_TxtRedeemButton.text = isRedeemable ? "Redeem Voucher" : "Redeem Items";
 
         m_ScanToRedeem.SetActive(!isRedeemable && readOnly);
         m_TxtToRedeem.text = $"Voucher is {voucherData.status}";
