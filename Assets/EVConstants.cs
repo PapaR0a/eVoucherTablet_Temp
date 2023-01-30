@@ -4,6 +4,8 @@ using UnityEngine;
 
 public static class EVConstants
 {
+    public const float REFRESH_INTERVAL = 10.0f;
+
     public const string URL_USERDATA_TEST = "https://worker-typescript-template.cabzarmi.workers.dev/api/clinician/client/42918365";
     public const string URL_USERLIST = "https://worker-typescript-template.cabzarmi.workers.dev/api/clinician/client";
     public const string URL_USERDATA = "https://worker-typescript-template.cabzarmi.workers.dev/api/clinician/client/{0}";

@@ -20,7 +20,7 @@ public class EVVouchersScannedView : MonoBehaviour
     private bool m_isCamAvailable;
     private WebCamTexture m_cameraTexture;
 
-    private float m_Timer = 5;
+    private float m_Timer = EVConstants.REFRESH_INTERVAL;
 
     private IEnumerator CreateVouchers()
     {
@@ -90,7 +90,7 @@ public class EVVouchersScannedView : MonoBehaviour
         }
         else
         {
-            m_Timer = 5f;
+            m_Timer = EVConstants.REFRESH_INTERVAL;
             StartCoroutine(GetVouchers());
         }
 

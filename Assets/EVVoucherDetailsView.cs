@@ -14,6 +14,7 @@ public class EVVoucherDetailsView : MonoBehaviour
 
     [SerializeField] private Transform m_itemsList;
     [SerializeField] private GameObject m_itemPrefab;
+    [SerializeField] private GameObject m_issueButton;
 
     private Voucher m_Data;
 
@@ -32,6 +33,8 @@ public class EVVoucherDetailsView : MonoBehaviour
         m_Department.text = $"Department: {data.department}";
         m_Expiration.text = $"Exp: {data.expiry_date}";
         m_QR.text = $"QR ID: {data.id}";
+
+        m_issueButton.SetActive(data.status == "pending");
 
         StartCoroutine(CreateItems(data.items));
     }
