@@ -51,7 +51,12 @@ public class EVCardsPageView : MonoBehaviour
 
     private void OnEnable()
     {
-        //APIHelper.GetAllVouchers();
+        if (APIHelper.GetAllVouchers())
+        {
+            UpdateDropdown();
+            EVModel.Api.UpdateUserVouchers(m_Dropdown.options[m_Dropdown.value].text);
+            DisplayUserDetails();
+        }
     }
 
     private void ClearItems()

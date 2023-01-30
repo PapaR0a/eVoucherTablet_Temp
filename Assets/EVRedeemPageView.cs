@@ -94,7 +94,7 @@ public class EVRedeemPageView : MonoBehaviour
         m_BtnRedeem.onClick.RemoveAllListeners();
         EVControl.Api.OnShowVoucherDetails -= UpdateDetailsView;
 
-        //EVControl.Api.FetchUserData(EVModel.Api.UserDetail.id);
+        APIHelper.GetAllVouchers();
     }
 
     public void UpdateDetailsView(Voucher voucherData, bool readOnly = false)
@@ -127,7 +127,7 @@ public class EVRedeemPageView : MonoBehaviour
 
     private IEnumerator CreateItems(VoucherProduct[] products, bool readOnly = false)
     {
-        yield return StartCoroutine(ClearItems());
+        yield return ClearItems();
 
         var wait = new WaitForEndOfFrame();
 
@@ -146,13 +146,12 @@ public class EVRedeemPageView : MonoBehaviour
 
     private IEnumerator ClearItems()
     {
-        var wait = new WaitForEndOfFrame();
-
         foreach (Transform item in m_ProductsContainer)
         {
             Destroy(item.gameObject);
-            yield return wait;
         }
+
+        yield return new WaitForSeconds(0.1f);
     }
 
     private string GenerateRandomId(int length = 0)

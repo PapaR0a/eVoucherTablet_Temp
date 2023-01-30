@@ -1,4 +1,6 @@
 //using DG.Tweening;
+using DG.Tweening;
+using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -34,6 +36,6 @@ public class EVHistoryPageItemView : MonoBehaviour
     public void OnClickCard()
     {
         EVModel.Api.CachedCurrentVoucher = m_Data;
-        //DOVirtual.DelayedCall(0.01f, () => EVControl.Api.ShowVoucherDetails(m_Data, true));
+        DOVirtual.DelayedCall(0.01f, () => EVControl.Api.ShowVoucherDetails(m_Data, true));
     }
 }

@@ -44,6 +44,11 @@ public class EVCardsPageItemView : MonoBehaviour
         m_BtnRedeem.onClick.AddListener(OnClickRedeem);
     }
 
+    public void OnDisable()
+    {
+        m_BtnRedeem.onClick.RemoveAllListeners();
+    }
+
     public void SetupCard(Voucher data)
     {
         m_Data = data;
