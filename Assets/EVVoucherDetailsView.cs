@@ -34,7 +34,7 @@ public class EVVoucherDetailsView : MonoBehaviour
         m_Expiration.text = $"Exp: {data.expiry_date}";
         m_QR.text = $"QR ID: {data.id}";
 
-        m_issueButton.SetActive(data.status == "pending");
+        m_issueButton.SetActive(data.status.ToLower() == "pending");
 
         StartCoroutine(CreateItems(data.items));
     }

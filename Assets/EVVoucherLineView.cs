@@ -18,11 +18,21 @@ public class EVVoucherLineView : MonoBehaviour
     public void Setup(Voucher data, Action<Voucher> onClick = null)
     {
         m_Data = data;
-        m_TxtId.text = data.id;
-        m_TxtOrg.text = data.org;
-        m_TxtDept.text = data.department;
-        m_TxtExpiry.text = data.expiry_date;
-        m_TxtIssuer.text = data.issuer;
+
+        if (m_TxtId)
+            m_TxtId.text = data.id;
+
+        if (m_TxtOrg)
+            m_TxtOrg.text = data.org;
+
+        if (m_TxtDept)
+            m_TxtDept.text = data.department;
+
+        if (m_TxtExpiry)
+            m_TxtExpiry.text = data.expiry_date;
+
+        if (m_TxtIssuer)
+            m_TxtIssuer.text = data.issuer;
 
         onClickEvent = onClick;
     }

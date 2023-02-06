@@ -114,7 +114,7 @@ public class EVRedeemPageView : MonoBehaviour
         StartCoroutine( CreateItems(voucherData.items, readOnly) );
         m_QRCode.gameObject.SetActive(readOnly);
 
-        bool isRedeemable = voucherData.status == "Pending";
+        bool isRedeemable = voucherData.status.ToLower() == "pending";
 
         m_BtnRedeem.gameObject.SetActive(!readOnly || isRedeemable);
         //m_TxtRedeemButton.text = isRedeemable ? "Redeem Voucher" : "Redeem Items";
@@ -168,7 +168,7 @@ public class EVRedeemPageView : MonoBehaviour
 
     private void OnGenerateQR()
     {
-        if (m_Data.status != "Pending")
+        if (m_Data.status.ToLower() != "pending")
         {
             m_newVoucherId = GenerateRandomId();
             CreateQR(m_newVoucherId);

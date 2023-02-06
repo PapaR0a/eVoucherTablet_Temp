@@ -26,12 +26,17 @@ public class EVVouchersScannedView : MonoBehaviour
     {
         var wait = new WaitForEndOfFrame();
 
-        foreach (var voucher in EVModel.Api.ScannedVouchers)
+        if (EVModel.Api.ScannedVouchers != null)
         {
-            EVVoucherLineView voucherLine = Instantiate(m_VoucherItem, m_VouchersList).GetComponent<EVVoucherLineView>();
-            yield return wait;
-            voucherLine.Setup(voucher, ShowVoucherDetails);
+            foreach (var voucher in EVModel.Api.ScannedVouchers)
+            {
+                EVVoucherLineView voucherLine = Instantiate(m_VoucherItem, m_VouchersList).GetComponent<EVVoucherLineView>();
+                yield return wait;
+                voucherLine.Setup(voucher, ShowVoucherDetails);
+            }
         }
+
+        yield return null;
     }
 
     private void Start()
@@ -68,7 +73,7 @@ public class EVVouchersScannedView : MonoBehaviour
 
         for (int i = 0; i < devices.Length; i++)
         {
-            if (devices[i].isFrontFacing == false)
+            if (devices[i].isFrontFacing == true)
             {
                 m_cameraTexture = new WebCamTexture(devices[i].name, (int)m_scanZone.rect.width, (int)m_scanZone.rect.height);
             }
@@ -88,7 +93,7 @@ public class EVVouchersScannedView : MonoBehaviour
         {
             m_Timer -= Time.deltaTime;
         }
-        else
+        else if (!m_scannerUI.activeSelf)
         {
             m_Timer = EVConstants.REFRESH_INTERVAL;
             StartCoroutine(GetVouchers());
@@ -131,6 +136,7 @@ public class EVVouchersScannedView : MonoBehaviour
                     if (voucher.id == result.Text)
                     {
                         ShowVoucherDetails(voucher);
+                        AddScannedVoucherToList(voucher);
                         break;
                     }
                 }
@@ -139,14 +145,14 @@ public class EVVouchersScannedView : MonoBehaviour
             }
             else
             {
-                if (EVModel.Api.AllVouchers.Count <= 0)
-                {
-                    m_QRResultText.text = "No voucher records found to fetch details from";
-                }
-                else
-                {
+                //if (EVModel.Api.AllVouchers.Count <= 0)
+                //{
+                //    m_QRResultText.text = "No voucher records found to fetch details from";
+                //}
+                //else
+                //{
                     m_QRResultText.text = "Scanning Voucher ID..";
-                }
+                //}
             }
         }
         catch
@@ -160,6 +166,11 @@ public class EVVouchersScannedView : MonoBehaviour
         m_scannerUI.SetActive(false);
         m_DetailsView.SetActive(true);
         m_DetailsView.GetComponent<EVVoucherDetailsView>().UpdateDetailsView(data);
+    }
+
+    private void AddScannedVoucherToList(Voucher data)
+    {
+        APIHelper.AddScannedVoucher(data);
     }
 
     public void OnCloseScanner()
