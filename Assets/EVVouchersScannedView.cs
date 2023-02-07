@@ -73,7 +73,7 @@ public class EVVouchersScannedView : MonoBehaviour
 
         for (int i = 0; i < devices.Length; i++)
         {
-            if (devices[i].isFrontFacing == true)
+            if (devices[i].isFrontFacing == false)
             {
                 m_cameraTexture = new WebCamTexture(devices[i].name, (int)m_scanZone.rect.width, (int)m_scanZone.rect.height);
             }
