@@ -217,7 +217,7 @@ public static class APIHelper
             return false;
         }
 
-        Debug.Log($"<color=yellow>Fetch Data Success</color>");
+        //Debug.Log($"<color=yellow>Fetch Data Success</color>");
         EVControl.Api.FinishUpdatingUserVouchers();
         return true;
     }
@@ -238,7 +238,10 @@ public static class APIHelper
                 ["status"] = "Redeemed",
                 ["expiry_date"] = data.expiry_date,
                 ["fundingType"] = data.fundingType,
-                ["items"] = JArray.FromObject(data.items)
+                ["items"] = JArray.FromObject(data.items),
+                ["address"] = data.address,
+                ["contactNo"] = data.contactNo,
+                ["email"] = data.email,
             }
         };
 
@@ -307,7 +310,10 @@ public static class APIHelper
                 ["status"] = "Redeemed",
                 ["expiry_date"] = data.voucher.expiry_date,
                 ["fundingType"] = EVModel.Api.UserDetail.fundingType,
-                ["items"] = JArray.FromObject(data.voucher.items)
+                ["items"] = JArray.FromObject(data.voucher.items),
+                ["address"] = data.voucher.address,
+                ["contactNo"] = data.voucher.contactNo,
+                ["email"] = data.voucher.email,
             }
         };
 

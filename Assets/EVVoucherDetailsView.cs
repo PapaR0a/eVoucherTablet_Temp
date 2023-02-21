@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,6 +12,9 @@ public class EVVoucherDetailsView : MonoBehaviour
     [SerializeField] private Text m_Department;
     [SerializeField] private Text m_Expiration;
     [SerializeField] private Text m_QR;
+    [SerializeField] private Text m_Address;
+    [SerializeField] private Text m_ContactNo;
+    [SerializeField] private Text m_Email;
 
     [SerializeField] private Transform m_itemsList;
     [SerializeField] private GameObject m_itemPrefab;
@@ -27,19 +31,25 @@ public class EVVoucherDetailsView : MonoBehaviour
     {
         m_Data = data;
 
-        m_PatientName.text = data.patientName;
-        m_Organization.text = $"Organization: {data.org}";
-        m_FundingType.text = $"Funding Type: {data.status}";
-        m_Department.text = $"Department: {data.department}";
-        m_Expiration.text = $"Exp: {data.expiry_date}";
-        m_QR.text = $"QR ID: {data.id}";
+        m_PatientName.text = data.patientName ?? string.Empty;
+        m_Organization.text = $"Organization: {data.org ?? string.Empty}";
+        m_FundingType.text = $"Funding Type: {data.status ?? string.Empty}";
+        m_Department.text = $"Department: {data.department ?? string.Empty}";
+        m_Expiration.text = $"Exp: {data.expiry_date ?? string.Empty}";
+        m_QR.text = $"QR ID: {data.id ?? string.Empty}";
 
-        m_issueButton.SetActive(data.status.ToLower() == "pending");
+        m_Address.text = $"Address: {data.address ?? string.Empty}";
+        m_ContactNo.text = $"ContactNo: {data.contactNo ?? string.Empty}";
+        m_Email.text = $"Email: {data.email ?? string.Empty}";
 
-        StartCoroutine(CreateItems(data.items));
+        bool isPending = data.status.ToLower() == "pending";
+
+        m_issueButton.SetActive(isPending);
+
+        StartCoroutine(CreateItems(data.items, isPending));
     }
 
-    private IEnumerator CreateItems(VoucherProduct[] items)
+    private IEnumerator CreateItems(VoucherProduct[] items, bool editable = false)
     {
         var wait = new WaitForEndOfFrame();
         ClearItems();
@@ -47,7 +57,7 @@ public class EVVoucherDetailsView : MonoBehaviour
         {
             var view = Instantiate(m_itemPrefab, m_itemsList).GetComponent<EVVoucherItemView>();
             yield return wait;
-            view.Setup(product.quantity, product.name);
+            view.Setup(product.remaining, product.name, editable, product.id);
         }
     }
 
@@ -59,8 +69,56 @@ public class EVVoucherDetailsView : MonoBehaviour
         }
     }
 
+    private void UpdateActiveVoucher()
+    {
+        var activeVoucher = new PatchVoucherData();
+
+        activeVoucher.patiendId = m_Data.patientId;
+
+        foreach (var voucher in EVModel.Api.AllVouchers)
+        {
+            if (voucher.status.ToLower() == "active" && voucher.patientId == m_Data.patientId)
+            {
+                activeVoucher.voucherId = voucher.id;
+                activeVoucher.items = voucher.items.ToList();
+                break;
+            }
+        }
+
+        List<VoucherProduct> redeemingItems = new List<VoucherProduct>();
+        foreach (Transform item in m_itemsList)
+        {
+            EVVoucherItemView itemView = item.GetComponent<EVVoucherItemView>();
+            if (itemView != null)
+            {
+                var redeemingItem = new VoucherProduct();
+                redeemingItem.id = itemView.ItemId;
+                redeemingItem.name = itemView.GetItemName();
+                redeemingItem.remaining = itemView.GetRedeemingCount();
+                redeemingItems.Add(redeemingItem);
+            }
+        }
+
+        m_Data.items = redeemingItems.ToArray();
+
+        foreach (var activeRemaining in activeVoucher.items)
+        {
+            foreach (var redeemingItem in redeemingItems)
+            {
+                if (activeRemaining.id == redeemingItem.id)
+                {
+                    activeRemaining.remaining = activeRemaining.remaining - redeemingItem.remaining;
+                    break;
+                }
+            }
+        }
+
+        EVControl.Api.UpdateVoucherData(activeVoucher);
+    }
+
     public void OnIssue()
     {
+        UpdateActiveVoucher();
         APIHelper.IssueVoucher(m_Data);
         APIHelper.GetAllVouchers();
         gameObject.SetActive(false);

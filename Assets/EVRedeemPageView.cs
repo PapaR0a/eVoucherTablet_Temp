@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +33,11 @@ public class EVRedeemPageView : MonoBehaviour
     [SerializeField] private GameObject m_ScanToRedeem;
     [SerializeField] private Text m_TxtToRedeem;
     [SerializeField] private Text m_TxtRedeemButton;
+
+    [SerializeField] private InputField m_InputAddress;
+    [SerializeField] private InputField m_InputNumber;
+    [SerializeField] private InputField m_InputEmail;
+
     private Texture2D m_storeEncodedTexture;
     private string m_newVoucherId;
 
@@ -100,6 +106,7 @@ public class EVRedeemPageView : MonoBehaviour
 
     public void UpdateDetailsView(Voucher voucherData, bool readOnly = false)
     {
+        Debug.LogError($"voucherData {JsonConvert.SerializeObject(voucherData)}");
         m_Data = voucherData;
 
         m_TxtFundingType.text = $"Funding Type: {voucherData.fundingType}";
@@ -107,6 +114,10 @@ public class EVRedeemPageView : MonoBehaviour
         m_TxtDepartment.text = $"Department: {voucherData.department}";
         m_TxtExpiryDate.text = $"Expiry Date: {voucherData.expiry_date}";
         m_TxtId.text = voucherData.id;
+
+        m_InputAddress.text = voucherData.address ?? string.Empty;
+        m_InputNumber.text = voucherData.contactNo ?? string.Empty;
+        m_InputEmail.text = voucherData.email ?? string.Empty;
 
         m_ImageOrgLogo.sprite = GetOrgSprite(m_Data.org);
         m_ImageCardFront.sprite = GetFrontCardSprite(m_Data.org);
@@ -121,6 +132,10 @@ public class EVRedeemPageView : MonoBehaviour
 
         m_ScanToRedeem.SetActive(!isRedeemable && readOnly);
         m_TxtToRedeem.text = $"Voucher is {voucherData.status}";
+
+        m_InputAddress.interactable = !readOnly;
+        m_InputNumber.interactable = !readOnly;
+        m_InputEmail.interactable = !readOnly;
 
         if (readOnly)
         {
@@ -185,11 +200,15 @@ public class EVRedeemPageView : MonoBehaviour
             newVoucher.voucher.expiry_date = m_Data.expiry_date;
             newVoucher.voucher.fundingType = EVModel.Api.UserDetail.fundingType;
 
+            newVoucher.voucher.address = m_InputAddress.text;
+            newVoucher.voucher.contactNo = m_InputNumber.text;
+            newVoucher.voucher.email = m_InputEmail.text;
+
             var redeemingItems = new List<VoucherProduct>();
-            var remainingItems = new PatchVoucherData();
-            remainingItems.patiendId = EVModel.Api.UserDetail.id;
-            remainingItems.voucherId = m_Data.id;
-            remainingItems.items = new List<VoucherProduct>();
+            var activeVoucher = new PatchVoucherData();
+            activeVoucher.patiendId = EVModel.Api.UserDetail.id;
+            activeVoucher.voucherId = m_Data.id;
+            activeVoucher.items = new List<VoucherProduct>();
             foreach (Transform item in m_ProductsContainer)
             {
                 EVVoucherProductItemView itemView = item.GetComponent<EVVoucherProductItemView>();
@@ -198,40 +217,79 @@ public class EVRedeemPageView : MonoBehaviour
                     var remainingItem = new VoucherProduct();
                     remainingItem.id = itemView.GetItemId();
                     remainingItem.name = itemView.GetItemName();
-                    remainingItem.quantity = itemView.GetItemDefaultQuantity();
-                    remainingItem.remaining = itemView.GetItemRemaining();
-                    remainingItems.items.Add(remainingItem);
+                    remainingItem.remaining = itemView.GetItemDefaultQuantity() - itemView.GetRedeemCount();
+                    activeVoucher.items.Add(remainingItem);
 
                     var redeemingItem = new VoucherProduct();
                     redeemingItem.id = itemView.GetItemId();
                     redeemingItem.name = itemView.GetItemName();
-                    redeemingItem.quantity = itemView.GetRedeemCount();
+                    redeemingItem.remaining = itemView.GetRedeemCount();
                     redeemingItems.Add(redeemingItem);
                 }
             }
 
             newVoucher.voucher.items = redeemingItems.ToArray();
 
-            EVControl.Api.UpdateVoucherData(remainingItems);
+            EVControl.Api.UpdateVoucherData(activeVoucher);
             EVControl.Api.DirectRedeemVoucher(newVoucher);
         }
         else 
         {
-            var updateVoucher = new PostVoucherData();
-            updateVoucher.patientId = EVModel.Api.UserDetail.id;
+            var redeemingVoucher = new PostVoucherData();
+            redeemingVoucher.patientId = EVModel.Api.UserDetail.id;
 
-            updateVoucher.voucher = new Voucher();
-            updateVoucher.voucher.id = m_Data.id;
-            updateVoucher.voucher.status = "Redeemed";
-            updateVoucher.voucher.department = m_Data.department;
-            updateVoucher.voucher.org = m_Data.org;
-            updateVoucher.voucher.expiry_date = m_Data.expiry_date;
-            updateVoucher.voucher.fundingType = EVModel.Api.UserDetail.fundingType;
-            updateVoucher.voucher.items = m_Data.items;
+            redeemingVoucher.voucher = new Voucher();
+            redeemingVoucher.voucher.id = m_Data.id;
+            redeemingVoucher.voucher.status = "Redeemed";
+            redeemingVoucher.voucher.department = m_Data.department;
+            redeemingVoucher.voucher.org = m_Data.org;
+            redeemingVoucher.voucher.expiry_date = m_Data.expiry_date;
+            redeemingVoucher.voucher.fundingType = EVModel.Api.UserDetail.fundingType;
+            redeemingVoucher.voucher.address = m_Data.address;
+            redeemingVoucher.voucher.contactNo = m_Data.contactNo;
+            redeemingVoucher.voucher.email = m_Data.email;
 
-            EVControl.Api.DirectRedeemVoucher(updateVoucher);
+            List<VoucherProduct> redeemingItems = new List<VoucherProduct>();
+
+            foreach (Transform item in m_ProductsContainer)
+            {
+                EVVoucherProductItemView itemView = item.GetComponent<EVVoucherProductItemView>();
+                if (itemView != null)
+                {
+                    var redeemingItem = new VoucherProduct();
+                    redeemingItem.id = itemView.GetItemId();
+                    redeemingItem.name = itemView.GetItemName();
+                    redeemingItem.remaining = itemView.GetItemRemaining();
+                    redeemingItems.Add(redeemingItem);
+                }
+            }
+
+            redeemingVoucher.voucher.items = redeemingItems.ToArray();
+
+            EVControl.Api.DirectRedeemVoucher(redeemingVoucher);
+
+            var activeVoucher = new PatchVoucherData();
+
+            activeVoucher.patiendId = EVModel.Api.UserDetail.id;
+            activeVoucher.voucherId = EVModel.Api.UserActiveVouchers.FirstOrDefault().id;
+            activeVoucher.items = EVModel.Api.UserActiveVouchers.FirstOrDefault().items.ToList();
+
+            foreach (var activeRemaining in activeVoucher.items)
+            {
+                foreach (var redeemingItem in redeemingItems)
+                {
+                    if (activeRemaining.id == redeemingItem.id)
+                    {
+                        activeRemaining.remaining = activeRemaining.remaining - redeemingItem.remaining;
+                        break;
+                    }
+                }
+            }
+
+            EVControl.Api.UpdateVoucherData(activeVoucher);
         }
 
+        m_TxtToRedeem.text = $"Voucher is Redeemed";
         //EVControl.Api.FetchUserData(EVModel.Api.UserDetail.id);
     }
 

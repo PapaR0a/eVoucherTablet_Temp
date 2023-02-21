@@ -96,6 +96,9 @@ public class Voucher
     public string patientName;
     public string patientId;
     public VoucherProduct[] items;
+    public string address;
+    public string contactNo;
+    public string email;
 }
 
 

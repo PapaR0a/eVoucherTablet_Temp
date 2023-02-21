@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class EVVoucherProductItemView : MonoBehaviour
 {
-    private Text m_TxtQuantity;
+    private InputField m_TxtQuantity;
     private Text m_TxtProductName;
     private InputField m_IfRedeemCount;
 
@@ -26,13 +26,13 @@ public class EVVoucherProductItemView : MonoBehaviour
     {
         m_Data = data;
 
-        m_TxtQuantity = transform.Find("quantity").GetComponent<Text>();
+        m_TxtQuantity = transform.Find("quantity").GetComponent<InputField>();
         m_TxtProductName = transform.Find("name").GetComponent<Text>();
         m_IfRedeemCount = transform.Find("redeem").GetComponent<InputField>();
         m_IfRedeemCount.gameObject.SetActive(!readOnly);
         m_IfRedeemCount.onEndEdit.AddListener(delegate { OnEditRedeem(); });
 
-        m_TxtQuantity.text = readOnly ? data.quantity.ToString() : data.remaining.ToString();
+        m_TxtQuantity.text = readOnly ? data.remaining.ToString() : data.remaining.ToString();
         m_TxtProductName.text = data.name;
     }
 
@@ -45,7 +45,7 @@ public class EVVoucherProductItemView : MonoBehaviour
             m_TxtQuantity.text = m_Remaining < 0 ? 0.ToString() : m_Remaining.ToString();
 
             m_RedeemCount = int.Parse(m_IfRedeemCount.text);
-            //m_Remaining = int.Parse(m_TxtQuantity.text);
+            m_Remaining = int.Parse(m_TxtQuantity.text);
 
             m_RedeemCount = m_RedeemCount < 0 ? 0 : m_RedeemCount;
             m_Remaining = m_Remaining < 0 ? 0 : m_Remaining;
@@ -54,6 +54,8 @@ public class EVVoucherProductItemView : MonoBehaviour
 
     public int GetItemRemaining()
     {
+        m_Remaining = int.Parse(m_TxtQuantity.text);
+        m_Remaining = m_Remaining < 0 ? 0 : m_Remaining;
         return m_Remaining;
     }
 
@@ -74,6 +76,6 @@ public class EVVoucherProductItemView : MonoBehaviour
 
     public int GetItemDefaultQuantity()
     {
-        return m_Data.quantity;
+        return m_Data.remaining;
     }
 }
