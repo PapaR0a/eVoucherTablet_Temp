@@ -37,6 +37,10 @@ public class EVRedeemPageView : MonoBehaviour
     [SerializeField] private InputField m_InputAddress;
     [SerializeField] private InputField m_InputNumber;
     [SerializeField] private InputField m_InputEmail;
+    [SerializeField] private DatePickerControl m_InputDate;
+    [SerializeField] private DatePickerControl m_InputTime;
+    [SerializeField] private Text m_InputDateText;
+    [SerializeField] private Text m_InputTimeText;
 
     private Texture2D m_storeEncodedTexture;
     private string m_newVoucherId;
@@ -118,6 +122,10 @@ public class EVRedeemPageView : MonoBehaviour
         m_InputAddress.text = voucherData.address ?? string.Empty;
         m_InputNumber.text = voucherData.contactNo ?? string.Empty;
         m_InputEmail.text = voucherData.email ?? string.Empty;
+        m_InputDate.dateText.text = voucherData.deliveryDate ?? string.Empty;
+        m_InputDateText.text = voucherData.deliveryDate ?? "Delivery Date";
+        m_InputTime.dateText.text = voucherData.deliveryTime ?? string.Empty;
+        m_InputTimeText.text = voucherData.deliveryTime ?? "Delivery Time";
 
         m_ImageOrgLogo.sprite = GetOrgSprite(m_Data.org);
         m_ImageCardFront.sprite = GetFrontCardSprite(m_Data.org);
@@ -135,6 +143,8 @@ public class EVRedeemPageView : MonoBehaviour
         m_InputAddress.interactable = !readOnly;
         m_InputNumber.interactable = !readOnly;
         m_InputEmail.interactable = !readOnly;
+        //m_InputDate.interactable = !readOnly;
+        //m_InputTime.interactable = !readOnly;
 
         if (readOnly)
         {
@@ -197,8 +207,8 @@ public class EVRedeemPageView : MonoBehaviour
             newVoucher.voucher.address = m_InputAddress.text;
             newVoucher.voucher.contactNo = m_InputNumber.text;
             newVoucher.voucher.email = m_InputEmail.text;
-            newVoucher.voucher.deliveryDate = "23/02/2023";
-            newVoucher.voucher.deliveryTime = "13:42:07";
+            newVoucher.voucher.deliveryDate = m_InputDate.dateText.text;
+            newVoucher.voucher.deliveryTime = m_InputTime.dateText.text;
 
             var redeemingItems = new List<VoucherProduct>();
             foreach (Transform item in m_ProductsContainer)
