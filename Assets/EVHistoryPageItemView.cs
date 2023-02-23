@@ -3,6 +3,7 @@ using DG.Tweening;
 using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -26,7 +27,11 @@ public class EVHistoryPageItemView : MonoBehaviour
         m_TxtFundingType = transform.Find("fundingtype").GetComponent<Text>();
         m_TxtExpiryDate = transform.Find("expirationdate").GetComponent<Text>();
 
-        m_TxtStatus.text = $"{data.status}";
+        string status = data.status;
+        TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+        status = textInfo.ToTitleCase(status);
+
+        m_TxtStatus.text = $"{status}";
         m_TxtOrganization.text = $"Organization: {data.org}";
         m_TxtDepartment.text = $"Department: {data.department}";
         m_TxtFundingType.text = $"Funding Type: {data.fundingType}";

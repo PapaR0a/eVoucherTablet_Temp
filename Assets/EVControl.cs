@@ -44,9 +44,20 @@ public class EVControl
         APIHelper.UpdateVoucher(updateVoucherData);
     }
 
-    public void DirectRedeemVoucher(PostVoucherData newVoucherData)
+    public void DirectRedeemVoucher(RedeemVoucherDTO newVoucherData)
     {
-        APIHelper.DirectRedeemVoucher(newVoucherData);
+        APIHelper.DirectRedeemVoucher(newVoucherData, (result, message) => 
+        {
+            Debug.LogError($"DirectRedeemVoucher Result: Successful: {result} Message: {message}");
+        });
+    }
+
+    public void UpdatePendingVoucher(RedeemVoucherDTO newVoucherData)
+    {
+        APIHelper.UpdatePendingVoucher(newVoucherData, (result, message) =>
+        {
+            Debug.LogError($"UpdatePendingVoucher Result: Successful: {result} Message: {message}");
+        });
     }
 
     public void ShowVoucherDetails(Voucher voucher, bool readOnly = false)

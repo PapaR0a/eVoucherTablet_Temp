@@ -53,9 +53,7 @@ public class EVCardsPageView : MonoBehaviour
     {
         if (APIHelper.GetAllVouchers())
         {
-            UpdateDropdown();
-            EVModel.Api.UpdateUserVouchers(m_Dropdown.options[m_Dropdown.value].text);
-            DisplayUserDetails();
+            UpdatePage();
         }
     }
 
@@ -74,28 +72,23 @@ public class EVCardsPageView : MonoBehaviour
 
     private void Start()
     {
-        EVControl.Api.OnFinishUpdatingUserVouchers += UpdateDropdown;
+        EVControl.Api.OnFinishUpdatingUserVouchers += UpdatePage;
         m_Dropdown.onValueChanged.AddListener(OnSelectUser);
     }
 
-    private void UpdateDropdown()
+    private void UpdatePage()
     {
         m_Dropdown.options.Clear();
         m_Dropdown.AddOptions(EVModel.Api.UsersList);
+
+        EVModel.Api.UpdateUserVouchers(m_Dropdown.options[m_Dropdown.value].text);
+        DisplayUserDetails();
     }
 
     private void OnDestroy()
     {
-        EVControl.Api.OnFinishUpdatingUserVouchers -= UpdateDropdown;
+        EVControl.Api.OnFinishUpdatingUserVouchers -= UpdatePage;
         m_Dropdown.onValueChanged.RemoveAllListeners();
-    }
-
-    private void Update()
-    {
-        //if (!m_isDataAcquired && EVModel.Api.CachedUserData != null)
-        //{
-        //    m_isDataAcquired = true;
-        //}
     }
 
     private IEnumerator CreateActiveCards(Voucher voucherData)

@@ -53,12 +53,20 @@ public class EVCardsPageItemView : MonoBehaviour
     {
         m_Data = data;
 
-        m_TxtFundingType.text = $"Funding Type: {data.fundingType}";
-        m_TxtOrganization.text = $"Organization: {data.org}";
-        m_TxtDepartment.text = $"Department: {data.department}";
-        m_TxtExpiryDate.text = $"Expiry Date: {data.expiry_date}";
+        if (m_TxtFundingType)
+            m_TxtFundingType.text = $"Funding Type: {data.fundingType ?? string.Empty}";
 
-        m_TxtId.text = data.id;
+        if (m_TxtOrganization)
+            m_TxtOrganization.text = $"Organization: {data.org ?? string.Empty}";
+
+        if (m_TxtDepartment)
+            m_TxtDepartment.text = $"Department: {data.department ?? string.Empty}";
+
+        if (m_TxtExpiryDate)
+            m_TxtExpiryDate.text = $"Expiry Date: {data.expiry_date ?? string.Empty}";
+
+        if (m_TxtId)
+            m_TxtId.text = data.id ?? string.Empty;
 
         m_ImageOrgLogo.sprite = GetOrgSprite(m_Data.org);
         m_ImageCardFront.sprite = GetFrontCardSprite(m_Data.org);

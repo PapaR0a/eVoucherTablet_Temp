@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Text;
+using System;
 
 public static class APIHelper
 {
@@ -187,12 +188,6 @@ public static class APIHelper
                         receivedVoucher.patientId = userData.Value<string>("id");
                         receivedVoucher.patientName = userData.Value<string>("name");
                         EVModel.Api.AllVouchers.Add(receivedVoucher);
-
-                        // Old implementation
-                        //if (receivedVoucher.status == "Pending" || receivedVoucher.status == "Redeemed")
-                        //{
-                        //    EVModel.Api.ScannedVouchers.Add(receivedVoucher);
-                        //}
                     }
                     catch
                     {
@@ -217,7 +212,6 @@ public static class APIHelper
             return false;
         }
 
-        //Debug.Log($"<color=yellow>Fetch Data Success</color>");
         EVControl.Api.FinishUpdatingUserVouchers();
         return true;
     }
@@ -294,9 +288,9 @@ public static class APIHelper
         Debug.Log($"<color=yellow>UpdateVoucher Success</color>");
     }
 
-    public static void DirectRedeemVoucher(PostVoucherData data)
+    public static void DirectRedeemVoucher(RedeemVoucherDTO data, Action<bool, string> callback = null)
     {
-        HttpWebRequest createRequest = (HttpWebRequest)WebRequest.Create(EVConstants.URL_VOUCHER_CREATE);
+        HttpWebRequest createRequest = (HttpWebRequest)WebRequest.Create(EVConstants.URL_REDEEM_VOUCHER);
         createRequest.Method = "POST";
 
         var postData = new JObject()
@@ -304,20 +298,17 @@ public static class APIHelper
             ["patientId"] = data.patientId,
             ["voucher"] = new JObject()
             {
-                ["id"] = data.voucher.id,
-                ["org"] = data.voucher.org,
-                ["department"] = data.voucher.department,
-                ["status"] = "Redeemed",
-                ["expiry_date"] = data.voucher.expiry_date,
-                ["fundingType"] = EVModel.Api.UserDetail.fundingType,
+                ["redeemId"] = data.voucher.id,
                 ["items"] = JArray.FromObject(data.voucher.items),
                 ["address"] = data.voucher.address,
                 ["contactNo"] = data.voucher.contactNo,
                 ["email"] = data.voucher.email,
+                ["deliveryDate"] = data.voucher.deliveryDate,
+                ["deliveryTime"] = data.voucher.deliveryTime
             }
         };
 
-        Debug.Log($"<color=yellow>POST Json: {JsonConvert.SerializeObject(postData)}</color>");
+        Debug.Log($"<color=yellow>DirectRedeemVoucher Json: {JsonConvert.SerializeObject(postData)}</color>");
         var encoded = Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(postData));
 
         createRequest.ContentType = "application/json";
@@ -330,9 +321,49 @@ public static class APIHelper
         StreamReader reader = new StreamReader(response.GetResponseStream());
         string json = reader.ReadToEnd();
 
+        JObject result  = JsonConvert.DeserializeObject<JObject>(json);
+        bool isSuccess = result.Value<int>("code") == 200;
+        string message = result.Value<string>("message") ?? string.Empty;
+        callback?.Invoke(isSuccess, message);
+
         reader.Close();
         response.Close();
+    }
 
-        Debug.Log($"<color=yellow>Issue Voucher Success</color>");
+    public static void UpdatePendingVoucher(RedeemVoucherDTO data, Action<bool, string> callback = null)
+    {
+        HttpWebRequest createRequest = (HttpWebRequest)WebRequest.Create(EVConstants.URL_UPDATE_PENDING_VOUCHER);
+        createRequest.Method = "POST";
+
+        var postData = new JObject()
+        {
+            ["patientId"] = data.patientId,
+            ["voucher"] = new JObject()
+            {
+                ["id"] = data.voucher.id,
+                ["items"] = JArray.FromObject(data.voucher.items),
+            }
+        };
+
+        Debug.Log($"<color=yellow>UpdatePendingVoucher Json: {JsonConvert.SerializeObject(postData)}</color>");
+        var encoded = Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(postData));
+
+        createRequest.ContentType = "application/json";
+        Stream dataStream = createRequest.GetRequestStream();
+        dataStream.Write(encoded, 0, encoded.Length);
+        dataStream.Close();
+
+        HttpWebResponse response = (HttpWebResponse)createRequest.GetResponse();
+
+        StreamReader reader = new StreamReader(response.GetResponseStream());
+        string json = reader.ReadToEnd();
+
+        JObject result = JsonConvert.DeserializeObject<JObject>(json);
+        bool isSuccess = result.Value<int>("code") == 200;
+        string message = result.Value<string>("message") ?? string.Empty;
+        callback?.Invoke(isSuccess, message);
+
+        reader.Close();
+        response.Close();
     }
 }

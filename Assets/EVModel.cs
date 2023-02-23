@@ -69,7 +69,7 @@ public class UserDetail
 }
 
 [System.Serializable]
-public class PostVoucherData
+public class RedeemVoucherDTO
 {
     public string patientId;
     public Voucher voucher;
@@ -96,9 +96,11 @@ public class Voucher
     public string patientName;
     public string patientId;
     public VoucherProduct[] items;
+    public string email;
     public string address;
     public string contactNo;
-    public string email;
+    public string deliveryDate;
+    public string deliveryTime;
 }
 
 

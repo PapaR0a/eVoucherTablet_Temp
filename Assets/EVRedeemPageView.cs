@@ -106,7 +106,7 @@ public class EVRedeemPageView : MonoBehaviour
 
     public void UpdateDetailsView(Voucher voucherData, bool readOnly = false)
     {
-        Debug.LogError($"voucherData {JsonConvert.SerializeObject(voucherData)}");
+        Debug.Log($"<color=yellow>Voucher Details: {JsonConvert.SerializeObject(voucherData)}</color>");
         m_Data = voucherData;
 
         m_TxtFundingType.text = $"Funding Type: {voucherData.fundingType}";
@@ -128,7 +128,6 @@ public class EVRedeemPageView : MonoBehaviour
         bool isRedeemable = voucherData.status.ToLower() == "pending";
 
         m_BtnRedeem.gameObject.SetActive(!readOnly || isRedeemable);
-        //m_TxtRedeemButton.text = isRedeemable ? "Redeem Voucher" : "Redeem Items";
 
         m_ScanToRedeem.SetActive(!isRedeemable && readOnly);
         m_TxtToRedeem.text = $"Voucher is {voucherData.status}";
@@ -183,43 +182,30 @@ public class EVRedeemPageView : MonoBehaviour
 
     private void OnGenerateQR()
     {
-        if (m_Data.status.ToLower() != "pending")
+        if (m_Data.status.ToLower() != "pending") // Direct redeeming
         {
             m_newVoucherId = GenerateRandomId();
             CreateQR(m_newVoucherId);
             m_QRCodeIdDisplay.text = m_newVoucherId;
 
-            var newVoucher = new PostVoucherData();
+            var newVoucher = new RedeemVoucherDTO();
             newVoucher.patientId = EVModel.Api.UserDetail.id;
 
             newVoucher.voucher = new Voucher();
-            newVoucher.voucher.id = m_newVoucherId;
-            newVoucher.voucher.status = "Redeemed";
-            newVoucher.voucher.department = m_Data.department;
-            newVoucher.voucher.org = m_Data.org;
-            newVoucher.voucher.expiry_date = m_Data.expiry_date;
-            newVoucher.voucher.fundingType = EVModel.Api.UserDetail.fundingType;
+            newVoucher.voucher.id = m_newVoucherId; // redeemId
 
             newVoucher.voucher.address = m_InputAddress.text;
             newVoucher.voucher.contactNo = m_InputNumber.text;
             newVoucher.voucher.email = m_InputEmail.text;
+            newVoucher.voucher.deliveryDate = "23/02/2023";
+            newVoucher.voucher.deliveryTime = "13:42:07";
 
             var redeemingItems = new List<VoucherProduct>();
-            var activeVoucher = new PatchVoucherData();
-            activeVoucher.patiendId = EVModel.Api.UserDetail.id;
-            activeVoucher.voucherId = m_Data.id;
-            activeVoucher.items = new List<VoucherProduct>();
             foreach (Transform item in m_ProductsContainer)
             {
                 EVVoucherProductItemView itemView = item.GetComponent<EVVoucherProductItemView>();
                 if (itemView != null)
                 {
-                    var remainingItem = new VoucherProduct();
-                    remainingItem.id = itemView.GetItemId();
-                    remainingItem.name = itemView.GetItemName();
-                    remainingItem.remaining = itemView.GetItemDefaultQuantity() - itemView.GetRedeemCount();
-                    activeVoucher.items.Add(remainingItem);
-
                     var redeemingItem = new VoucherProduct();
                     redeemingItem.id = itemView.GetItemId();
                     redeemingItem.name = itemView.GetItemName();
@@ -229,25 +215,16 @@ public class EVRedeemPageView : MonoBehaviour
             }
 
             newVoucher.voucher.items = redeemingItems.ToArray();
-
-            EVControl.Api.UpdateVoucherData(activeVoucher);
             EVControl.Api.DirectRedeemVoucher(newVoucher);
-        }
-        else 
-        {
-            var redeemingVoucher = new PostVoucherData();
-            redeemingVoucher.patientId = EVModel.Api.UserDetail.id;
 
-            redeemingVoucher.voucher = new Voucher();
-            redeemingVoucher.voucher.id = m_Data.id;
-            redeemingVoucher.voucher.status = "Redeemed";
-            redeemingVoucher.voucher.department = m_Data.department;
-            redeemingVoucher.voucher.org = m_Data.org;
-            redeemingVoucher.voucher.expiry_date = m_Data.expiry_date;
-            redeemingVoucher.voucher.fundingType = EVModel.Api.UserDetail.fundingType;
-            redeemingVoucher.voucher.address = m_Data.address;
-            redeemingVoucher.voucher.contactNo = m_Data.contactNo;
-            redeemingVoucher.voucher.email = m_Data.email;
+        }
+        else // Pending redeeming
+        {
+            var pendingVoucher = new RedeemVoucherDTO();
+            pendingVoucher.patientId = EVModel.Api.UserDetail.id;
+
+            pendingVoucher.voucher = new Voucher();
+            pendingVoucher.voucher.id = m_Data.id;
 
             List<VoucherProduct> redeemingItems = new List<VoucherProduct>();
 
@@ -264,33 +241,12 @@ public class EVRedeemPageView : MonoBehaviour
                 }
             }
 
-            redeemingVoucher.voucher.items = redeemingItems.ToArray();
+            pendingVoucher.voucher.items = redeemingItems.ToArray();
 
-            EVControl.Api.DirectRedeemVoucher(redeemingVoucher);
-
-            var activeVoucher = new PatchVoucherData();
-
-            activeVoucher.patiendId = EVModel.Api.UserDetail.id;
-            activeVoucher.voucherId = EVModel.Api.UserActiveVouchers.FirstOrDefault().id;
-            activeVoucher.items = EVModel.Api.UserActiveVouchers.FirstOrDefault().items.ToList();
-
-            foreach (var activeRemaining in activeVoucher.items)
-            {
-                foreach (var redeemingItem in redeemingItems)
-                {
-                    if (activeRemaining.id == redeemingItem.id)
-                    {
-                        activeRemaining.remaining = activeRemaining.remaining - redeemingItem.remaining;
-                        break;
-                    }
-                }
-            }
-
-            EVControl.Api.UpdateVoucherData(activeVoucher);
+            EVControl.Api.UpdatePendingVoucher(pendingVoucher);
         }
 
         m_TxtToRedeem.text = $"Voucher is Redeemed";
-        //EVControl.Api.FetchUserData(EVModel.Api.UserDetail.id);
     }
 
     private Sprite GetOrgSprite(string org)
