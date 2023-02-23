@@ -17,6 +17,8 @@ public class EVVouchersScannedView : MonoBehaviour
     [SerializeField] private Text m_QRResultText;
     [SerializeField] private GameObject m_DetailsView;
 
+    [SerializeField] private GameObject m_PopupView;
+
     private bool m_isCamAvailable;
     private WebCamTexture m_cameraTexture;
 
@@ -39,10 +41,23 @@ public class EVVouchersScannedView : MonoBehaviour
         yield return null;
     }
 
+    private void OnDestroy()
+    {
+        EVControl.Api.ShowPopupMessage -= ShowPopup;
+    }
+
     private void Start()
     {
+        EVControl.Api.ShowPopupMessage += ShowPopup;
+
         SetupCamera();
         StartCoroutine(GetVouchers());
+    }
+
+    private void ShowPopup(bool isSuccess, string message)
+    {
+        m_PopupView.SetActive(true);
+        m_PopupView.GetComponent<EVPopupView>().ShowMessage(message);
     }
 
     private IEnumerator GetVouchers()

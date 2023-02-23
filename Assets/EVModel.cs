@@ -109,6 +109,5 @@ public class VoucherProduct
 {
     public string id;
     public string name;
-    public int quantity;
     public int remaining;
 }

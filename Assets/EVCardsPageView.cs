@@ -27,25 +27,32 @@ public class EVCardsPageView : MonoBehaviour
     {
         ClearItems();
 
-        List<Voucher> activeVouchers = EVModel.Api.UserActiveVouchers;
-        //Debug.Log($"<color=yellow>activeVouchers {JsonConvert.SerializeObject(activeVouchers)}</color>");
-        if (activeVouchers != null && activeVouchers.Count > 0)
+        try
         {
-            foreach (var voucherData in activeVouchers)
+            List<Voucher> activeVouchers = EVModel.Api.UserActiveVouchers;
+            //Debug.Log($"<color=yellow>activeVouchers {JsonConvert.SerializeObject(activeVouchers)}</color>");
+            if (activeVouchers != null && activeVouchers.Count > 0)
             {
-                StartCoroutine(CreateActiveCards(voucherData));
+                foreach (var voucherData in activeVouchers)
+                {
+                    StartCoroutine(CreateActiveCards(voucherData));
+                }
+            }
+
+            List<Voucher> historyVouchers = EVModel.Api.UserHistoryVouchers;
+            //Debug.Log($"<color=yellow>historyVouchers {JsonConvert.SerializeObject(historyVouchers)}</color>");
+            if (historyVouchers != null && historyVouchers.Count > 0)
+            {
+                historyVouchers.Reverse();
+                foreach (var voucherData in historyVouchers)
+                {
+                    StartCoroutine(CreateHistoryCards(voucherData));
+                }
             }
         }
-
-        List<Voucher> historyVouchers = EVModel.Api.UserHistoryVouchers;
-        //Debug.Log($"<color=yellow>historyVouchers {JsonConvert.SerializeObject(historyVouchers)}</color>");
-        if (historyVouchers != null && historyVouchers.Count > 0)
+        catch
         {
-            historyVouchers.Reverse();
-            foreach (var voucherData in historyVouchers)
-            {
-                StartCoroutine(CreateHistoryCards(voucherData));
-            }
+
         }
     }
 

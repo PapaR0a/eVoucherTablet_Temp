@@ -28,6 +28,7 @@ public class EVControl
     public Action<Voucher, bool> OnShowVoucherDetails { get; set; }
     public Action<string> OnUpdateUserIdDisplay { get; set; }
     public Action OnFinishUpdatingUserVouchers { get; set; }
+    public Action<bool, string> ShowPopupMessage { get; set; }
 
     public void Init()
     {
@@ -49,6 +50,7 @@ public class EVControl
         APIHelper.DirectRedeemVoucher(newVoucherData, (result, message) => 
         {
             Debug.LogError($"DirectRedeemVoucher Result: Successful: {result} Message: {message}");
+            ShowPopupMessage?.Invoke(result, message);
         });
     }
 
@@ -56,7 +58,8 @@ public class EVControl
     {
         APIHelper.UpdatePendingVoucher(newVoucherData, (result, message) =>
         {
-            Debug.LogError($"UpdatePendingVoucher Result: Successful: {result} Message: {message}");
+            Debug.Log($"<color=yellow>UpdatePendingVoucher Result: Successful: {result} Message: {message}</color>");
+            ShowPopupMessage?.Invoke(result, message);
         });
     }
 

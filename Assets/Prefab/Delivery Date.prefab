@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 5835447476671332336}
   - component: {fileID: 5835447476671332339}
   - component: {fileID: 5835447476671332342}
+  - component: {fileID: 3673620123175782249}
   m_Layer: 5
   m_Name: Delivery Date
   m_TagString: Untagged
@@ -293,7 +294,7 @@ MonoBehaviour:
     manualUpdate: 0
     outVariableIndices: 
     keepDelayedEventsOnStateExit: 0
-    preprocessed: 0
+    preprocessed: 1
     ExposedEvents: []
     OutputEvents: []
     RestartOnEnable: 1
@@ -329,7 +330,21 @@ MonoBehaviour:
     handleAnimatorMove: 0
     handleAnimatorIK: 0
   fsmTemplate: {fileID: 0}
-  eventHandlerComponentsAdded: 0
+  eventHandlerComponentsAdded: 1
+--- !u!114 &3673620123175782249
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5835447476671331853}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad323e26f6475e1418442dbe3aa94632, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetFsms:
+  - {fileID: 5835447476671332342}
 --- !u!1 &5835447476742257868
 GameObject:
   m_ObjectHideFlags: 0
