@@ -27,6 +27,9 @@ public class EVCardsPageView : MonoBehaviour
     {
         ClearItems();
 
+        if (!gameObject.activeSelf)
+            return;
+
         try
         {
             List<Voucher> activeVouchers = EVModel.Api.UserActiveVouchers;

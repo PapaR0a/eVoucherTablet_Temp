@@ -10,6 +10,10 @@ public class EVModel
 
     public List<Voucher> ScannedVouchers { get; set; } = new List<Voucher>();
 
+    public List<Voucher> DeliveryVouchers { get; set; } = new List<Voucher>();
+
+    public List<Voucher> ActiveVouchers { get; set; } = new List<Voucher>();
+
     public List<UserDetail> UsersData { get; set; } = null;
 
     public UserDetail UserDetail { get; set; } = null;
@@ -69,7 +73,7 @@ public class UserDetail
 }
 
 [System.Serializable]
-public class RedeemVoucherDTO
+public class PostVoucherData
 {
     public string patientId;
     public Voucher voucher;

@@ -15,10 +15,13 @@ public class EVVoucherDetailsView : MonoBehaviour
     [SerializeField] private Text m_Address;
     [SerializeField] private Text m_ContactNo;
     [SerializeField] private Text m_Email;
+    [SerializeField] private Text m_DeliveryDate;
+    [SerializeField] private Text m_DeliveryTime;
 
     [SerializeField] private Transform m_itemsList;
     [SerializeField] private GameObject m_itemPrefab;
     [SerializeField] private GameObject m_issueButton;
+    [SerializeField] private GameObject m_deliveryButton;
 
     private Voucher m_Data;
 
@@ -33,18 +36,22 @@ public class EVVoucherDetailsView : MonoBehaviour
 
         m_PatientName.text = data.patientName ?? string.Empty;
         m_Organization.text = $"Organization: {data.org ?? string.Empty}";
-        m_FundingType.text = $"Funding Type: {data.status ?? string.Empty}";
+        m_FundingType.text = $"Funding Type: {data.fundingType ?? string.Empty}";
         m_Department.text = $"Department: {data.department ?? string.Empty}";
         m_Expiration.text = $"Exp: {data.expiry_date ?? string.Empty}";
         m_QR.text = $"QR ID: {data.id ?? string.Empty}";
 
-        m_Address.text = $"Address: {data.address ?? string.Empty}";
-        m_ContactNo.text = $"ContactNo: {data.contactNo ?? string.Empty}";
-        m_Email.text = $"Email: {data.email ?? string.Empty}";
+        m_Address.text = $"Address: {data.address ?? "--"}";
+        m_ContactNo.text = $"ContactNo: {data.contactNo ?? "--"}";
+        m_Email.text = $"Email: {data.email ?? "--"}";
+
+        m_DeliveryDate.text = $"Delivery Date: {data.deliveryDate ?? "--"}";
+        m_DeliveryTime.text = $"Delivery Time: {data.deliveryTime ?? "--"}";
 
         bool isPending = data.status.ToLower() == "pending";
 
         m_issueButton.SetActive(isPending);
+        m_deliveryButton.SetActive(false);
 
         StartCoroutine(CreateItems(data.items, isPending));
     }

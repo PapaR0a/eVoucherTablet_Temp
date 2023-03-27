@@ -163,6 +163,8 @@ public static class APIHelper
         EVModel.Api.UsersData = new List<UserDetail>();
         EVModel.Api.UsersList = new List<string>();
         EVModel.Api.AllVouchers = new List<Voucher>();
+        EVModel.Api.DeliveryVouchers = new List<Voucher>();
+        EVModel.Api.ActiveVouchers = new List<Voucher>();
 
         foreach (JObject userData in userList)
         {
@@ -188,6 +190,16 @@ public static class APIHelper
                         receivedVoucher.patientId = userData.Value<string>("id");
                         receivedVoucher.patientName = userData.Value<string>("name");
                         EVModel.Api.AllVouchers.Add(receivedVoucher);
+
+                        if (receivedVoucher.status.ToLower().Contains("deliver"))
+                        {
+                            EVModel.Api.DeliveryVouchers.Add(receivedVoucher);
+                        }
+
+                        if (receivedVoucher.status.ToLower() == "active")
+                        {
+                            EVModel.Api.ActiveVouchers.Add(receivedVoucher);
+                        }
                     }
                     catch
                     {
@@ -288,7 +300,7 @@ public static class APIHelper
         Debug.Log($"<color=yellow>UpdateVoucher Success</color>");
     }
 
-    public static void DirectRedeemVoucher(RedeemVoucherDTO data, Action<bool, string> callback = null)
+    public static void DirectRedeemVoucher(PostVoucherData data, Action<bool, string> callback = null)
     {
         HttpWebRequest createRequest = (HttpWebRequest)WebRequest.Create(EVConstants.URL_REDEEM_VOUCHER);
         createRequest.Method = "POST";
@@ -330,7 +342,7 @@ public static class APIHelper
         response.Close();
     }
 
-    public static void UpdatePendingVoucher(RedeemVoucherDTO data, Action<bool, string> callback = null)
+    public static void UpdatePendingVoucher(PostVoucherData data, Action<bool, string> callback = null)
     {
         HttpWebRequest createRequest = (HttpWebRequest)WebRequest.Create(EVConstants.URL_UPDATE_PENDING_VOUCHER);
         createRequest.Method = "POST";
@@ -365,5 +377,87 @@ public static class APIHelper
 
         reader.Close();
         response.Close();
+    }
+
+    public static void CreateDeliveryRequest(PostVoucherData data, Action callback = null)
+    {
+        HttpWebRequest createRequest = (HttpWebRequest)WebRequest.Create(EVConstants.URL_CREATE_REQUEST_DELIVERY);
+        createRequest.Method = "POST";
+
+        var postData = new JObject()
+        {
+            ["patientId"] = data.patientId,
+            ["voucher"] = new JObject()
+            {
+                ["redeemId"] = data.voucher.id,
+                ["items"] = JArray.FromObject(data.voucher.items),
+                ["address"] = data.voucher.address,
+                ["contactNo"] = data.voucher.contactNo,
+                ["email"] = data.voucher.email,
+                ["deliveryDate"] = data.voucher.deliveryDate,
+                ["deliveryTime"] = data.voucher.deliveryTime
+            }
+        };
+
+        Debug.Log($"<color=yellow>POST Json: {JsonConvert.SerializeObject(postData)}</color>");
+        var encoded = Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(postData));
+
+        createRequest.ContentType = "application/json";
+        Stream dataStream = createRequest.GetRequestStream();
+        dataStream.Write(encoded, 0, encoded.Length);
+        dataStream.Close();
+
+        HttpWebResponse response = (HttpWebResponse)createRequest.GetResponse();
+
+        StreamReader reader = new StreamReader(response.GetResponseStream());
+        string json = reader.ReadToEnd();
+
+        reader.Close();
+        response.Close();
+
+        callback?.Invoke();
+
+        Debug.Log($"<color=yellow>Request Delivery Success: {json}</color>");
+    }
+
+    public static void UpdateDeliveryRequest(PostVoucherData data, Action callback = null)
+    {
+        HttpWebRequest createRequest = (HttpWebRequest)WebRequest.Create(EVConstants.URL_UPDATE_REQUEST_DELIVERY);
+        createRequest.Method = "POST";
+
+        var postData = new JObject()
+        {
+            ["patientId"] = data.patientId,
+            ["voucher"] = new JObject()
+            {
+                ["id"] = data.voucher.id,
+                ["items"] = JArray.FromObject(data.voucher.items),
+                ["address"] = data.voucher.address,
+                ["contactNo"] = data.voucher.contactNo,
+                ["email"] = data.voucher.email,
+                ["deliveryDate"] = data.voucher.deliveryDate,
+                ["deliveryTime"] = data.voucher.deliveryTime
+            }
+        };
+
+        Debug.Log($"<color=yellow>POST Json: {JsonConvert.SerializeObject(postData)}</color>");
+        var encoded = Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(postData));
+
+        createRequest.ContentType = "application/json";
+        Stream dataStream = createRequest.GetRequestStream();
+        dataStream.Write(encoded, 0, encoded.Length);
+        dataStream.Close();
+
+        HttpWebResponse response = (HttpWebResponse)createRequest.GetResponse();
+
+        StreamReader reader = new StreamReader(response.GetResponseStream());
+        string json = reader.ReadToEnd();
+
+        reader.Close();
+        response.Close();
+
+        callback?.Invoke();
+
+        Debug.Log($"<color=yellow>Request Delivery Success: {json}</color>");
     }
 }

@@ -21,16 +21,52 @@ public class EVVouchersScannedView : MonoBehaviour
 
     private bool m_isCamAvailable;
     private WebCamTexture m_cameraTexture;
+    private VoucherStatusFilter filter = VoucherStatusFilter.All;
+
+    public enum VoucherStatusFilter
+    {
+        All,
+        Active,
+        Delivery
+    }
+
+    public void UpdateFilter(int value)
+    {
+        filter = (VoucherStatusFilter)value;
+        m_Timer = 0.25f;
+        //StartCoroutine(GetVouchers());
+    }
 
     private float m_Timer = EVConstants.REFRESH_INTERVAL;
 
     private IEnumerator CreateVouchers()
     {
         var wait = new WaitForEndOfFrame();
+        List<Voucher> vouchersToDisplay;
 
-        if (EVModel.Api.ScannedVouchers != null)
+        switch (filter)
         {
-            foreach (var voucher in EVModel.Api.ScannedVouchers)
+            case VoucherStatusFilter.Active:
+                vouchersToDisplay = EVModel.Api.ActiveVouchers;
+                break;
+
+            case VoucherStatusFilter.Delivery:
+                vouchersToDisplay = EVModel.Api.DeliveryVouchers;
+                break;
+
+            default:
+                vouchersToDisplay = EVModel.Api.ScannedVouchers;
+                break;
+        }
+
+        if (vouchersToDisplay != null)
+        {
+            foreach (Transform item in m_VouchersList)
+            {
+                Destroy(item.gameObject);
+            }
+
+            foreach (var voucher in vouchersToDisplay)
             {
                 EVVoucherLineView voucherLine = Instantiate(m_VoucherItem, m_VouchersList).GetComponent<EVVoucherLineView>();
                 yield return wait;
@@ -62,15 +98,12 @@ public class EVVouchersScannedView : MonoBehaviour
 
     private IEnumerator GetVouchers()
     {
-        var wait = new WaitForEndOfFrame();
-
         foreach (Transform item in m_VouchersList)
         {
             Destroy(item.gameObject);
         }
 
-        EVModel.Api.AllVouchers = null;
-        EVModel.Api.ScannedVouchers = null;
+        yield return new WaitForEndOfFrame();
 
         yield return APIHelper.GetAllVouchers();
 

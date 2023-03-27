@@ -78,7 +78,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Funding Type: Self-Payment'
+  m_Text: 'Funding Type: --'
 --- !u!1 &2227239958573732270
 GameObject:
   m_ObjectHideFlags: 0
@@ -467,7 +467,7 @@ MonoBehaviour:
     handleFixedUpdate: 0
     handleLateUpdate: 0
     handleApplicationEvents: 0
-    handleUiEvents: 0
+    handleUiEvents: 32
     handleLegacyNetworking: 0
     handleAnimatorMove: 0
     handleAnimatorIK: 0
@@ -644,7 +644,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Expiration Date: 23 Nov 2023'
+  m_Text: 'Expiration Date: --'
 --- !u!1 &2227239959465605456
 GameObject:
   m_ObjectHideFlags: 0
@@ -806,6 +806,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7d19b331196c0f4aab9fafbd07e48d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_TxtStatus: {fileID: 2227239959853408167}
+  m_TxtOrganization: {fileID: 2227239959951820107}
+  m_TxtDepartment: {fileID: 2227239959515700396}
+  m_TxtFundingType: {fileID: 2227239958334367272}
+  m_TxtExpiryDate: {fileID: 2227239959332244704}
 --- !u!1 &2227239959515700398
 GameObject:
   m_ObjectHideFlags: 0
@@ -884,7 +889,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Department: Building A'
+  m_Text: 'Department: --'
 --- !u!1 &2227239959853408161
 GameObject:
   m_ObjectHideFlags: 0
@@ -963,7 +968,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Partial Redemption
+  m_Text: --
 --- !u!1 &2227239959951820101
 GameObject:
   m_ObjectHideFlags: 0
@@ -1042,4 +1047,4 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Organization: TTSH'
+  m_Text: 'Organization: --'

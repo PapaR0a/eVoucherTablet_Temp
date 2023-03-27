@@ -9,23 +9,17 @@ using UnityEngine.UI;
 
 public class EVHistoryPageItemView : MonoBehaviour
 {
-    private Text m_TxtStatus;
-    private Text m_TxtOrganization;
-    private Text m_TxtDepartment;
-    private Text m_TxtFundingType;
-    private Text m_TxtExpiryDate;
+    public Text m_TxtStatus;
+    public Text m_TxtOrganization;
+    public Text m_TxtDepartment;
+    public Text m_TxtFundingType;
+    public Text m_TxtExpiryDate;
 
     private Voucher m_Data;
 
     public void SetupCard(Voucher data)
     {
         m_Data = data;
-
-        m_TxtStatus = transform.Find("status").GetComponent<Text>();
-        m_TxtOrganization = transform.Find("organization").GetComponent<Text>();
-        m_TxtDepartment = transform.Find("department").GetComponent<Text>();
-        m_TxtFundingType = transform.Find("fundingtype").GetComponent<Text>();
-        m_TxtExpiryDate = transform.Find("expirationdate").GetComponent<Text>();
 
         string status = data.status;
         TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;

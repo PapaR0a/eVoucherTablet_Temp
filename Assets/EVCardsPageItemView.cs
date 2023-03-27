@@ -5,11 +5,11 @@ using UnityEngine.UI;
 
 public class EVCardsPageItemView : MonoBehaviour
 {
-    private Text m_TxtTitle;
-    private Text m_TxtFundingType;
-    private Text m_TxtOrganization;
-    private Text m_TxtDepartment;
-    private Text m_TxtExpiryDate;
+    public Text m_TxtTitle;
+    public Text m_TxtFundingType;
+    public Text m_TxtOrganization;
+    public Text m_TxtDepartment;
+    public Text m_TxtExpiryDate;
     private Button m_BtnRedeem;
 
     private Text m_TxtId;

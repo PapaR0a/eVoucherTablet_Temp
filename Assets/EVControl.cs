@@ -45,7 +45,7 @@ public class EVControl
         APIHelper.UpdateVoucher(updateVoucherData);
     }
 
-    public void DirectRedeemVoucher(RedeemVoucherDTO newVoucherData)
+    public void DirectRedeemVoucher(PostVoucherData newVoucherData)
     {
         APIHelper.DirectRedeemVoucher(newVoucherData, (result, message) => 
         {
@@ -54,13 +54,23 @@ public class EVControl
         });
     }
 
-    public void UpdatePendingVoucher(RedeemVoucherDTO newVoucherData)
+    public void UpdatePendingVoucher(PostVoucherData newVoucherData)
     {
         APIHelper.UpdatePendingVoucher(newVoucherData, (result, message) =>
         {
             Debug.Log($"<color=yellow>UpdatePendingVoucher Result: Successful: {result} Message: {message}</color>");
             ShowPopupMessage?.Invoke(result, message);
         });
+    }
+
+    public void CreateNewRequestDelivery(PostVoucherData newRequestData, Action callback = null)
+    {
+        APIHelper.CreateDeliveryRequest(newRequestData, callback);
+    }
+
+    public void UpdateRequestDelivery(PostVoucherData updateRequestData, Action callback = null)
+    {
+        APIHelper.UpdateDeliveryRequest(updateRequestData, callback);
     }
 
     public void ShowVoucherDetails(Voucher voucher, bool readOnly = false)

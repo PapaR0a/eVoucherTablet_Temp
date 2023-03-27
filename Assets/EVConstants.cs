@@ -16,4 +16,6 @@ public static class EVConstants
 
     public const string URL_REDEEM_VOUCHER = "https://worker-typescript-template.cabzarmi.workers.dev/api/client/voucher/redeem";
     public const string URL_UPDATE_PENDING_VOUCHER = "https://worker-typescript-template.cabzarmi.workers.dev/api/client/voucher/pending";
+    public const string URL_CREATE_REQUEST_DELIVERY = "https://worker-typescript-template.cabzarmi.workers.dev/api/client/delivery/request";
+    public const string URL_UPDATE_REQUEST_DELIVERY = "https://worker-typescript-template.cabzarmi.workers.dev/api/client/delivery/pending";
 }
